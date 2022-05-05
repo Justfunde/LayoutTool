@@ -1,0 +1,22 @@
+VERSION 4/14/2003 9:52:38 AM
+FIG #C:\Documents and Settings\Administrator\My Documents\microwind2\Book on CMOS\carryCell.MSK
+BB(100,100,200,200)
+SIMU #10.00
+REC(101,101,198,198,ME)
+TITLE 63 97  #Vss
+$0 1000 0 
+TITLE 97 120  #~Carry
+$- 1000 0 
+TITLE 87 144  #Vdd
+$1 1000 0 
+TITLE 60 119  #A
+$- 1000 0 
+TITLE 76 118  #C
+$- 1000 0 
+TITLE 68 118  #B
+$- 1000 0 
+TITLE 83 116  #A
+$- 1000 0 
+TITLE 92 115  #B
+$- 1000 0 
+FFIG C:\Documents and Settings\Administrator\My Documents\microwind2\Book on CMOS\carryCell.MSK
