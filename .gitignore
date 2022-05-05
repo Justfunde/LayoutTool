@@ -1,0 +1,5 @@
+
+*.log
+.vs/
+Layout_identification_algh/x64/
+x64/
