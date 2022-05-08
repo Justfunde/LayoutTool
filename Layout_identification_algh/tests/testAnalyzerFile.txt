@@ -1,19 +1,52 @@
-MSK ANALYZER RESULTS
-Data&time information: 2022-04-8	03:14:39
-Layout file name : tests/cmos.msk
+______________________MSK_ANALYZER_RESULTS______________________
+______________________SECTION_COMMON_INFORMATION______________________
+Data&time information: 2022-04-9	00:18:59
+
+Layout file name : tests/Kotlyarov_LR1.MSK
 Rule file name : cmos012.rul
 Layout information:
 lambda = 0.060000
-Inside 47 geometries and 10 layers
-Geometry layer map:
-Format: LayerName--->LayerNum	GeometryCount
-BB--->-5	1
-NW--->1	1
-DP--->17	4
-DN--->16	4
-CO--->19	10
-PO--->13	5
-ME--->23	8
-VI--->-4	3
-M2--->27	7
-TITLE--->-6	4
+Inside 31 geometries and 8 layers
++----------------------------------------+
+| Layer name|Layer number|  GeometryCount|
++----------------------------------------+
+|         BB|          -5|              1|
+|         NW|           1|              1|
+|         DP|          17|              5|
+|         DN|          16|              5|
+|         CO|          19|              9|
+|         PO|          13|              2|
+|         ME|          23|              6|
+|      TITLE|          -6|              2|
++----------------------------------------+
+
+
+
+______________________SECTION_CELL_INFORMATION______________________
+Nwell info:
+LeftTop coordinates : {14,52}
+RightBot coordinates : {44,31}
+Height : 21
+
+VDD and VSS info:
+VDD:
+Power rail has no title! Information may not be accurate!
+LeftTop coordinates : {20,50}
+RightBot coordinates : {38,46}
+Height : 4
+Weight : 18
+Overlap channel and bus:
+Theoretical : 0.12
+Practical : 2
+
+VSS:
+Ground rail has no title! Information may not be accurate!
+LeftTop coordinates : {20,14}
+RightBot coordinates : {38,10}
+Height : 4
+Weight : 18
+
+Cell Height : 40
+
+
+

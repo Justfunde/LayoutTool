@@ -8,7 +8,6 @@ MICROWIND 2.0
 *        17 Apr 01 update params, add high voltage, tox, level3
 *        20 Apr 01 various lowK, 4 types of MOS
 *        10 Dec 01 Bsim4 model, gatek
-*        02 Jun 03 Bsim4 pmos model
 *
 NAME CMOS 0.12µm - 6 Metal
 *
@@ -196,7 +195,7 @@ rev5 = 1
 *
 * Parasitic capacitances
 *
-cpoOxyde= 15000 (Surface capacitance Poly/Thin oxyde aF/µm2)
+cpoOxyde= 4600 (Surface capacitance Poly/Thin oxyde aF/µm2)
 cedram = 150000 (embedded Dram surface capacitance aF/µm2)
 cpobody = 400  (No lineic capa)
 cp2body = 400
@@ -218,7 +217,7 @@ cm6lineic = 0
 * Vertical crosstalk
 *
 cmepoly = 60
-cp2poly = 1700
+cp2poly = 2000
 cm2me = 100
 cm3m2 = 100
 cm4m3 = 100
@@ -348,7 +347,7 @@ b4d0vt = 2.3
 b4d1vt = 0.54
 b4vfb = -0.9
 b4u0 = 0.018
-b4ua = 1.5e-15
+b4ua = 3e-15
 b4voff = 0.05
 b4uc = -0.047e-15
 b4vsat = 60e3

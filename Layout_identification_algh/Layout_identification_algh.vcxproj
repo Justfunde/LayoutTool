@@ -152,6 +152,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="LayoutGeometries.cpp" />
     <ClCompile Include="MskStaticAnalyzer.cpp" />
+    <ClCompile Include="PrettyTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base64.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Layout_comparator.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MskStaticAnalyzer.hpp" />
+    <ClInclude Include="PrettyTable.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

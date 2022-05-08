@@ -1,5 +1,5 @@
 #include "MskStaticAnalyzer.hpp"
-
+#include "PrettyTable.hpp"
 
 RuleParser::RuleParser(
    const std::string& FileName):RuleParser()
@@ -13,25 +13,24 @@ RuleParser::RuleParser(
    }
 }
 
+
 void 
 RuleParser::Reset()
 {
-   if (ruleFileStream) { ruleFileStream.close(); }
-   if (rules.get()) { rules.reset(); }
-   isParsed = false;
+   if (RuleFileStream) { RuleFileStream.close(); }
+   if (Rules.get()) { Rules.reset(); }
+   IsParsed = false;
 }
+
 
 std::shared_ptr<MskRules>
 RuleParser::GetRules()
 {
-   if (!isParsed)
+   if (!IsParsed)
    {
-      if (!ParseFile())
-      {
-         return nullptr;
-      }
+      if (!ParseFile()) throw std::runtime_error("File was not parsed!");
    }
-   return rules;
+   return Rules;
 }
 
 
@@ -39,86 +38,71 @@ void
 RuleParser::SetFileName(
    const std::string FileName)
 {
-   if (!CheckFileName(FileName)) throw std::runtime_error("Invalid file name!");
+   if (!CheckFileName(FileName)) throw std::invalid_argument("Invalid file name!");
 
-   if(isParsed) 
+   if(IsParsed) 
    {
       Reset();
    }
-   fileName = FileName;
+   this->FileName = FileName;
 }
 
 
 bool 
 RuleParser::ParseFile()
 {
-   if (fileName.empty()) { return false; }
-   if (isParsed) { return true; }
-   try
+   if (FileName.empty()) { return false; }
+   if (IsParsed) { return true; }
+
+   if (IsParsed) { Reset(); }
+
+   RuleFileStream.open(FileName, std::ios::in);
+   if (!RuleFileStream.is_open()) throw std::runtime_error("Rule file was not opened!");
+
+   std::string fileLine;
+   while (!RuleFileStream.eof())
    {
-      if (isParsed)
+      std::getline(RuleFileStream, fileLine);
+      if (fileLine.find("NAME") != std::string::npos)
       {
-         Reset();
+         ReadSectionCommonParams();
+         //TODO:delete this break
+         break;
       }
 
-      ruleFileStream.open(fileName, std::ios::in);
-      if (!ruleFileStream.is_open()) throw std::exception();
+   }
 
-      std::string fileLine;
-      while (!ruleFileStream.eof())
-      {
-         std::getline(ruleFileStream, fileLine);
-         if (fileLine.find("NAME") != std::string::npos)
-         {
-            ReadSectionCommonParams();
-            //TODO:delete this break
-            break;
-         }
-
-      }
-   }
-   catch (std::exception& ex)
+   if (size_t lastSepIndex = FileName.find_last_of("/"); lastSepIndex != std::string::npos)
    {
-      std::wcerr << "\nSmth bad happened:" << ex.what();
-      return false;
+      Rules->RuleFileName = std::string(FileName.begin() + lastSepIndex + 1, FileName.end());
    }
-   if (size_t lastSepIndex = fileName.find_last_of("/"); lastSepIndex != std::string::npos)
+   else
    {
-      rules->RuleFileName = std::string(fileName.begin() + lastSepIndex + 1, fileName.end());
+      Rules->RuleFileName = FileName;
    }
-   else 
-   {
-      rules->RuleFileName = fileName;
-   }
-   isParsed = true;
+   IsParsed = true;
    return true;
 }
 
 
 void 
 RuleParser::ReadSectionCommonParams()
-{
-  if (!ruleFileStream.is_open()) throw std::exception();
-  
+{ 
   std::string fileLine;
-  do
-  {
-     std::getline(ruleFileStream, fileLine);
-  } while (fileLine.find_first_of("*") == 0);
+  do { std::getline(RuleFileStream, fileLine); } while (fileLine.find_first_of("*") == 0);
 
   do
   {
      if (fileLine.find("lambda") == 0)
      {
-        rules->Lamda = GetNumVal(fileLine);
+        Rules->Lamda = GetNumVal(fileLine);
      }
      else if (fileLine.find("metalLayers") == 0)
      {
-        rules->NumMetalLayers = GetNumVal(fileLine);
+        Rules->NumMetalLayers = GetNumVal(fileLine);
      }
-     std::getline(ruleFileStream, fileLine);
+     std::getline(RuleFileStream, fileLine);
   } while (fileLine.find_first_of("*") != 0);
-
 }
 
 
@@ -153,17 +137,15 @@ RuleParser::GetNumVal(
    std::istream_iterator<std::string> end;
    std::vector<std::string> vecStr(begin, end);
 
-   bool flag = false;
-   for (size_t i = 0;i<vecStr.size();i++)
+   for (size_t i = 0; i < vecStr.size(); i++)
    {
       if (vecStr[i] == "=")
       {
          i++;
-         flag = true;
          return std::atof(vecStr[i].c_str());
       }
    }
-   if (!flag) throw std::runtime_error("Invalid RuleStr");
+   throw std::runtime_error("Invalid RuleStr");
 }
 
 
@@ -172,23 +154,33 @@ MskStaticAnalyzer::SetParameters(
    LayoutData* Data,
    std::shared_ptr<MskRules> Rules)
 {
-   if (!Data) { return; }
-   if (Data->fileFormat != LayoutFileFormat::MSK) { return; }
+   if (!Data) throw std::invalid_argument("LayoutData is nullptr");
+   if (Data->fileFormat != LayoutFileFormat::MSK) throw std::invalid_argument("Layout file format is not \".msk\"");
    MskData = Data;
    this->Rules = Rules;
 }
+
 
 MskStaticAnalyzer::MskStaticAnalyzer(
    LayoutData* Data,
    std::shared_ptr<MskRules> Rules) :MskStaticAnalyzer()
 {
-   SetParameters(Data, Rules);
+   try
+   {
+      SetParameters(Data, Rules);
+   }
+   catch (...)
+   {
+      Reset();
+   }
 }
+
 
 MskStaticAnalyzer::~MskStaticAnalyzer()
 {
    MskData = nullptr;
 }
+
 
 bool 
 MskStaticAnalyzer::WriteAnalyzedFile(
@@ -199,18 +191,19 @@ MskStaticAnalyzer::WriteAnalyzedFile(
    try
    {
       WriteEndian();
-      File << L"______________________MSK_ANALYZER_RESULTS______________________\n";
       File.open(OutFname,std::ios::out | std::ios::ate);
+      File << L"______________________MSK_ANALYZER_RESULTS______________________\n";
       WriteCommonInfo();
       WriteCellInfo();
      
    }
    catch (std::exception& ex)
    {
-      std::wcerr << L"\nSmth bad happened!" << ex.what();
+      if (File) { File.close(); }
+      throw;
    }
-   if (File)
-      File.close();
+   if (File) { File.close(); }
+   return true;
 }
 
 
@@ -275,21 +268,29 @@ MskStaticAnalyzer::WriteCommonInfo()
 {
    
    File << L"______________________SECTION_COMMON_INFORMATION______________________\n";
-   File << L"Data&time information: " << getTimeInfo()<<L"\n\n\n\n";
+   File << L"Data&time information: " << getTimeInfo()<<L"\n\n";
    File << L"Layout file name : " << MskData->fileName << L"\n";
    File << L"Rule file name : " << std::wstring(Rules->RuleFileName.begin(), Rules->RuleFileName.end()) << L"\n";
    File << L"Layout information:\nlambda = " << std::to_wstring(Rules->Lamda)<<L"\n";
    File << L"Inside " << MskData->libraries[0]->elements[0]->geometries.size() << " geometries and "<<MskData->libraries[0]->layers.size() <<" layers\n";
-   File << L"Geometry layer map:\nFormat: LayerName--->LayerNum\tGeometryCount\n";
-   
+
+
+   bprinter::TablePrinter tp(File);
+   tp.AddColumn(L"Layer name", 11);
+   tp.AddColumn(L"Layer number", 12);
+   tp.AddColumn(L"GeometryCount", 15);
+   tp.PrintHeader();
+
    for (auto mapIter = MskData->libraries[0]->layers.begin(); mapIter != MskData->libraries[0]->layers.end(); mapIter++)
    {
       std::unordered_map<std::string, int16_t>::const_iterator valIter = findVal(g_layerMap.begin(), g_layerMap.end(), mapIter->layer);
       if (MskData->libraries[0]->layers.end() == mapIter) throw std::runtime_error("invalid layer number (processing common section information");
-      File << std::wstring(valIter->first.begin(), valIter->first.end()) << "--->" << valIter->second << "\t" << mapIter->geometries.size() << "\n";
+      tp << std::wstring(valIter->first.begin(), valIter->first.end()) << valIter->second << mapIter->geometries.size();
    }
+   tp.PrintFooter();
    File << L"\n\n\n";
 }
+
 
 inline
 void
@@ -297,6 +298,7 @@ MskStaticAnalyzer::WriteCellInfo()
 {
    File << L"______________________SECTION_CELL_INFORMATION______________________\n";
    WriteNwellInfo();
+   WriteVddVssInfo();
 }
 
 
@@ -331,20 +333,73 @@ MskStaticAnalyzer::WriteNwellInfo()
 
    File << L"LeftTop coordinates : {" << nwellIter->geometries[0]->coords[0].x << L"," << nwellIter->geometries[0]->coords[0].y << "}\n";
    File << L"RightBot coordinates : {" << nwellIter->geometries[0]->coords[2].x << L"," << nwellIter->geometries[0]->coords[2].y << "}\n";
-   File << L"Height : " << nwellIter->geometries[0]->coords[0].y - nwellIter->geometries[0]->coords[2].y<<"\n";
+   File << L"Height : " << nwellIter->geometries[0]->coords[0].y - nwellIter->geometries[0]->coords[2].y<<"\n\n";
 }
+
 
 inline
 void 
 MskStaticAnalyzer::WriteVddVssInfo()
 {
+   Geometry* Vdd = nullptr;
+   Geometry* Vss = nullptr;
 
-}
+   File << L"VDD and VSS info:\n";
+   File << L"VDD:\n";
 
+   Vdd = FindTitleIntersection("Vdd", "ME");
+   if (!Vdd)
+   {
+      File << "Power rail has no title! Information may not be accurate!\n";
+      const auto layerIter = FindLayer("ME");
+      Coord coordToCheck = { std::numeric_limits<int32_t>::max(), std::numeric_limits<int32_t>::min() };
+      for (size_t i = 0; i < layerIter->geometries.size(); i++)
+      {
+         if (layerIter->geometries[i]->coords[0].x < coordToCheck.x && layerIter->geometries[i]->coords[0].y > coordToCheck.y)
+         {
+            coordToCheck.x = layerIter->geometries[i]->coords[0].x;
+            coordToCheck.y = layerIter->geometries[i]->coords[0].y;
+            Vdd = layerIter->geometries[i];
+         }
+      }
+   }
 
-void 
-MskStaticAnalyzer::SortGeometries()
-{
+   const auto nwellIter = FindLayer("NW");
+   if (Vdd)
+   {
+      File << L"LeftTop coordinates : {" << Vdd->coords[0].x << L"," << Vdd->coords[0].y << "}\n";
+      File << L"RightBot coordinates : {" << Vdd->coords[2].x << L"," << Vdd->coords[2].y << "}\n";
+      File << L"Height : " << Vdd->coords[0].y - Vdd->coords[2].y << "\n";
+      File << L"Weight : " << Vdd->coords[2].x - Vdd->coords[0].x << "\n";
+      File << L"Overlap channel and bus:\nTheoretical : " << 2 * Rules->Lamda << "\nPractical : " << nwellIter->geometries[0]->max.y - Vdd->max.y << L"\n\n";
+   }
+
+   File << "VSS:\n";
+   Vss = FindTitleIntersection("Vss", "ME");
+   if (!Vss)
+   {
+      File << "Ground rail has no title! Information may not be accurate!\n";
+      const auto layerIter = FindLayer("ME");
+      Coord coordToCheck = { std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max() };
+      for (size_t i = 0; i < layerIter->geometries.size(); i++)
+      {
+         if (layerIter->geometries[i]->coords[2].x > coordToCheck.x && layerIter->geometries[i]->coords[2].y < coordToCheck.y)
+         {
+            coordToCheck.x = layerIter->geometries[i]->coords[2].x;
+            coordToCheck.y = layerIter->geometries[i]->coords[2].y;
+            Vss = layerIter->geometries[i];
+         }
+      }
+   }
+
+   if (Vss)
+   {
+      File << L"LeftTop coordinates : {" << Vss->coords[0].x << L"," << Vss->coords[0].y << "}\n";
+      File << L"RightBot coordinates : {" << Vss->coords[2].x << L"," << Vss->coords[2].y << "}\n";
+      File << L"Height : " << Vss->coords[0].y - Vss->coords[2].y << "\n";
+      File << L"Weight : " << Vss->coords[2].x - Vss->coords[0].x << "\n\n";
+   }
+   File << L"Cell Height : " << Vdd->max.y - Vss->min.y<<"\n\n\n\n";
 }
 
 
@@ -379,7 +434,7 @@ MskStaticAnalyzer::FindTitleByName(
    const static auto titleLayerIter = FindLayer("TITLE");
 
    Geometry* p_resObj = nullptr;
-   for (size_t i = 0;i<titleLayerIter->geometries.size();i++)
+   for (size_t i = 0; i < titleLayerIter->geometries.size(); i++)
    {
       if (Name == static_cast<Text*>(titleLayerIter->geometries[i])->stringValue)
       {
@@ -402,4 +457,13 @@ MskStaticAnalyzer::IsIntersected(
       return false;
    }
    return true;
+}
+
+
+void 
+MskStaticAnalyzer::Reset()
+{
+   if (File) { File.close(); }
+   MskData = nullptr;
+   Rules.reset();
 }

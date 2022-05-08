@@ -7,7 +7,7 @@
 bool LayoutBitmapGenerator::init(LayoutData* data, const Coord& min, const Coord& max, const std::vector <int16_t>& layers)
 {
 	using namespace std;
-	//wcout << "\nInitialization BitmapGenerator with " << data->fileName << endl;
+	//wcout << "\nInitialization BitmapGenerator with " << data->FileName << endl;
 	reset();
 
 	const Coord leftTop  = { min.x,max.y };
@@ -38,7 +38,7 @@ bool LayoutBitmapGenerator::init(LayoutData* data, const Coord& min, const Coord
 bool LayoutBitmapGenerator::process(size_t iSize, size_t jSize)
 {
 	using namespace std;
-	//wcout << "\n\n\n\nProcessing\t" << data->fileName << endl;
+	//wcout << "\n\n\n\nProcessing\t" << data->FileName << endl;
 	if (!isCorrect)
 		return false;
 	if (iSize % fragmentsSize != 0 || jSize % fragmentsSize != 0)

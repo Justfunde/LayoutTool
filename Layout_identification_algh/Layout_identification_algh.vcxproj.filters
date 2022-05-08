@@ -19,6 +19,9 @@
     <Filter Include="MskStaticAnalyzer">
       <UniqueIdentifier>{a5eb0950-a68a-47d3-a016-7b3596f9801d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TablePrinter">
+      <UniqueIdentifier>{6c26fc86-1ca9-480f-a145-5d93ec718c02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +57,9 @@
     <ClCompile Include="MskStaticAnalyzer.cpp">
       <Filter>MskStaticAnalyzer</Filter>
     </ClCompile>
+    <ClCompile Include="PrettyTable.cpp">
+      <Filter>TablePrinter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Layout_comparator.h">
@@ -79,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="MskStaticAnalyzer.hpp">
       <Filter>MskStaticAnalyzer</Filter>
+    </ClInclude>
+    <ClInclude Include="PrettyTable.hpp">
+      <Filter>TablePrinter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

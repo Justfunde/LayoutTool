@@ -12,13 +12,13 @@ int main(int argc, char* argv[]) {
    parser.ParseFile();
    LayoutData  layoutFirst;
     //freopen("before.txt", "w", stdout);
-    //std::wstring fileName = L"tests/inv.gds";
-    //std::wstring fileName = L"output.gds";
-    //std::wstring fileName = L"tests/nand2.gds";
-    //std::wstring fileName = L"tests/xor.gds";
-    //std::wstring fileName = L"tests/1Kpolyg.gds";
-    //std::wstring fileName = L"tests/testDesign.gds";
-    std::wstring fileNameFirst = L"tests/cmos.msk";
+    //std::wstring FileName = L"tests/inv.gds";
+    //std::wstring FileName = L"output.gds";
+    //std::wstring FileName = L"tests/nand2.gds";
+    //std::wstring FileName = L"tests/xor.gds";
+    //std::wstring FileName = L"tests/1Kpolyg.gds";
+    //std::wstring FileName = L"tests/testDesign.gds";
+    std::wstring fileNameFirst = L"tests/Kotlyarov_LR1.MSK";
 
     LayoutReader* p_readerFirst = GetReader(fileNameFirst);
     if (!p_readerFirst) {

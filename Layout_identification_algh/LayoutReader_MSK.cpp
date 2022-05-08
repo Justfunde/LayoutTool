@@ -84,7 +84,7 @@ WcsStrToUtf8(
 
 
 std::string
-LayoutReader_MSK::GetElemName()//elementName == fileName
+LayoutReader_MSK::GetElemName()//elementName == FileName
 {
     const std::wstring& tempFileName = fileName;
     const size_t lastCommaPos = tempFileName.find_last_of(L".");
