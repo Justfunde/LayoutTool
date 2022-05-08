@@ -1,13 +1,16 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Layout_comparator.h"
 #include "LayoutReader_MSK.hpp"
+#include "MskStaticAnalyzer.hpp"
 #include <iostream>
 
 
 int main(int argc, char* argv[]) {
   
-   std::cout << char(0);
-    LayoutData  layoutFirst,layoutSecond;
+   MskStaticAnalyzer analyzer;
+   RuleParser parser("tests/cmos012.rul");
+   parser.ParseFile();
+   LayoutData  layoutFirst;
     //freopen("before.txt", "w", stdout);
     //std::wstring fileName = L"tests/inv.gds";
     //std::wstring fileName = L"output.gds";
@@ -15,7 +18,7 @@ int main(int argc, char* argv[]) {
     //std::wstring fileName = L"tests/xor.gds";
     //std::wstring fileName = L"tests/1Kpolyg.gds";
     //std::wstring fileName = L"tests/testDesign.gds";
-    std::wstring fileNameFirst = L"C:/MyProgrammingRepos/Layout_identification_algh/Layout_identification_algh/tests/carryCell_tst.MSK";
+    std::wstring fileNameFirst = L"tests/cmos.msk";
 
     LayoutReader* p_readerFirst = GetReader(fileNameFirst);
     if (!p_readerFirst) {
@@ -28,20 +31,21 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
     FreeReader(p_readerFirst);
-    
+    analyzer.SetParameters(&layoutFirst, parser.GetRules());
+    analyzer.WriteAnalyzedFile("tests/testAnalyzerFile.txt");
 
-    std::wcout << "Input file " << fileNameFirst << " has " << layoutFirst.libraries.size() << " library(ies)" << std::endl;
-   
-    for (size_t i = 0; i < layoutFirst.libraries.size(); ++i) {
-       std::cout << "  - Library [" << i << "] has name '" << layoutFirst.libraries[i]->name << "' and contains " << layoutFirst.libraries[i]->elements.size() << " elements:" << std::endl;
-       for (size_t j = 0; j < layoutFirst.libraries[i]->elements.size(); ++j)
-           std::cout << "      * " << layoutFirst.libraries[i]->elements[j]->name << " (contains " << layoutFirst.libraries[i]->elements[j]->geometries.size() << " geometries)" << std::endl;
-       std::cout << "    Library [" << i << "] also contains " << layoutFirst.libraries[i]->layers.size() << " layers (in order of appearance):" << std::endl;
-       std::cout << "      { ";
-       for (size_t j = 0; j < layoutFirst.libraries[i]->layers.size(); ++j)
-           std::cout << layoutFirst.libraries[i]->layers[j].layer << " ";
-       std::cout << " }" << std::endl;
-   }
+   // std::wcout << "Input file " << fileNameFirst << " has " << layoutFirst.libraries.size() << " library(ies)" << std::endl;
+   //
+   // for (size_t i = 0; i < layoutFirst.libraries.size(); ++i) {
+   //    std::cout << "  - Library [" << i << "] has name '" << layoutFirst.libraries[i]->name << "' and contains " << layoutFirst.libraries[i]->elements.size() << " elements:" << std::endl;
+   //    for (size_t j = 0; j < layoutFirst.libraries[i]->elements.size(); ++j)
+   //        std::cout << "      * " << layoutFirst.libraries[i]->elements[j]->name << " (contains " << layoutFirst.libraries[i]->elements[j]->geometries.size() << " geometries)" << std::endl;
+   //    std::cout << "    Library [" << i << "] also contains " << layoutFirst.libraries[i]->layers.size() << " layers (in order of appearance):" << std::endl;
+   //    std::cout << "      { ";
+   //    for (size_t j = 0; j < layoutFirst.libraries[i]->layers.size(); ++j)
+   //        std::cout << layoutFirst.libraries[i]->layers[j].layer << " ";
+   //    std::cout << " }" << std::endl;
+   //}
 
 
 

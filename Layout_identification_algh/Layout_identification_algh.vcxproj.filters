@@ -16,6 +16,9 @@
     <Filter Include="LayoutReader">
       <UniqueIdentifier>{db0c361b-c546-43e0-89d0-adf4f6e210e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MskStaticAnalyzer">
+      <UniqueIdentifier>{a5eb0950-a68a-47d3-a016-7b3596f9801d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="LayoutGeometries.cpp">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>
+    <ClCompile Include="MskStaticAnalyzer.cpp">
+      <Filter>MskStaticAnalyzer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Layout_comparator.h">
@@ -70,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="LayoutReader.hpp">
       <Filter>LayoutReader</Filter>
+    </ClInclude>
+    <ClInclude Include="MskStaticAnalyzer.hpp">
+      <Filter>MskStaticAnalyzer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

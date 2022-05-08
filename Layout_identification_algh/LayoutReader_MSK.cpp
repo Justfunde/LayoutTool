@@ -8,26 +8,10 @@
 #include "LayoutReader_MSK.hpp"
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <unordered_map>
+
 #include <codecvt>
 
-const static std::unordered_map <std::string, int16_t> 
-LayerMap = {
-    {"TITLE",-6},
-    {"BB",-5},
-    {"VI",-4},
-    {"V2",-1},
-    {"NW",1},
-    {"DN",16},
-    {"DP",17},
-    {"PO",13},
-    {"CO",19},
-    {"ME",23},
-    {"M2",27},
-    {"M3",34},
-    {"M4",36},
-    {"M5",53},
-    {"M6",55} };
+
 
 constexpr int16_t undefinedValue = std::numeric_limits<int16_t>::min();
 
