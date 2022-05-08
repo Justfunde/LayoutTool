@@ -56,7 +56,18 @@ public:
    bool WriteAnalyzedFile(const std::string& OutFname);
 private:
    std::wstring getTimeInfo();
+   //main sections
    inline void WriteEndian();
    inline void WriteCommonInfo();
-   
+   inline void WriteCellInfo();
+
+   //cell info
+   inline void WriteNwellInfo();
+   inline void WriteVddVssInfo();
+
+   std::vector<Layer>::const_iterator FindLayer(const std::string& LayerName) const;
+   Geometry* FindTitleIntersection(const std::string& TitleName, const std::string& LayerName);
+   bool IsIntersected( Geometry* First, Geometry* Second);
+   void SortGeometries();
+   Geometry* FindTitleByName(const std::string& Name);
 };

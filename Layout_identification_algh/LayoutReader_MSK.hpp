@@ -17,8 +17,8 @@
 #include "LayoutData.hpp"
 
 
-
-static const std::unordered_map<std::string, int16_t> LayerMap = 
+typedef std::unordered_map<std::string, int16_t> LayerMap;
+static const LayerMap g_layerMap = 
  {
 	 {"TITLE",-6},
 	 {"BB",-5},

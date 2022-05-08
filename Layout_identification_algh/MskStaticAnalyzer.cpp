@@ -199,8 +199,10 @@ MskStaticAnalyzer::WriteAnalyzedFile(
    try
    {
       WriteEndian();
+      File << L"______________________MSK_ANALYZER_RESULTS______________________\n";
       File.open(OutFname,std::ios::out | std::ios::ate);
       WriteCommonInfo();
+      WriteCellInfo();
      
    }
    catch (std::exception& ex)
@@ -271,8 +273,9 @@ inline
 void
 MskStaticAnalyzer::WriteCommonInfo()
 {
-   File << L"MSK ANALYZER RESULTS\n";
-   File << L"Data&time information: " << getTimeInfo()<<L"\n";
+   
+   File << L"______________________SECTION_COMMON_INFORMATION______________________\n";
+   File << L"Data&time information: " << getTimeInfo()<<L"\n\n\n\n";
    File << L"Layout file name : " << MskData->fileName << L"\n";
    File << L"Rule file name : " << std::wstring(Rules->RuleFileName.begin(), Rules->RuleFileName.end()) << L"\n";
    File << L"Layout information:\nlambda = " << std::to_wstring(Rules->Lamda)<<L"\n";
@@ -281,8 +284,122 @@ MskStaticAnalyzer::WriteCommonInfo()
    
    for (auto mapIter = MskData->libraries[0]->layers.begin(); mapIter != MskData->libraries[0]->layers.end(); mapIter++)
    {
-      std::unordered_map<std::string, int16_t>::const_iterator valIter = findVal(LayerMap.begin(), LayerMap.end(), mapIter->layer);
-      if (MskData->libraries[0]->layers.end() == mapIter) throw std::runtime_error("invalid layer number");
+      std::unordered_map<std::string, int16_t>::const_iterator valIter = findVal(g_layerMap.begin(), g_layerMap.end(), mapIter->layer);
+      if (MskData->libraries[0]->layers.end() == mapIter) throw std::runtime_error("invalid layer number (processing common section information");
       File << std::wstring(valIter->first.begin(), valIter->first.end()) << "--->" << valIter->second << "\t" << mapIter->geometries.size() << "\n";
    }
+   File << L"\n\n\n";
+}
+
+inline
+void
+MskStaticAnalyzer::WriteCellInfo()
+{
+   File << L"______________________SECTION_CELL_INFORMATION______________________\n";
+   WriteNwellInfo();
+}
+
+
+std::vector<Layer>::const_iterator
+MskStaticAnalyzer::FindLayer(
+   const std::string& LayerName) const
+{
+   
+   if (LayerName.empty()) { return MskData->libraries[0]->layers.end(); }
+
+   const auto iterForSearch = g_layerMap.find(LayerName);
+   if(g_layerMap.end() == iterForSearch) { return MskData->libraries[0]->layers.end(); }
+
+   for (std::vector<Layer>::const_iterator iter = MskData->libraries[0]->layers.begin(); iter != MskData->libraries[0]->layers.end(); iter++)
+   {
+      if (iter->layer == iterForSearch->second)
+      {
+         return iter;
+      }
+   }
+   return MskData->libraries[0]->layers.end();
+}
+
+
+inline
+void 
+MskStaticAnalyzer::WriteNwellInfo()
+{
+   File << L"Nwell info:\n";
+   const auto nwellIter = FindLayer("NW");
+   if (MskData->libraries[0]->layers.end() == nwellIter) throw std::runtime_error("Invalid layer number (processing Nwell section information)");
+
+   File << L"LeftTop coordinates : {" << nwellIter->geometries[0]->coords[0].x << L"," << nwellIter->geometries[0]->coords[0].y << "}\n";
+   File << L"RightBot coordinates : {" << nwellIter->geometries[0]->coords[2].x << L"," << nwellIter->geometries[0]->coords[2].y << "}\n";
+   File << L"Height : " << nwellIter->geometries[0]->coords[0].y - nwellIter->geometries[0]->coords[2].y<<"\n";
+}
+
+inline
+void 
+MskStaticAnalyzer::WriteVddVssInfo()
+{
+
+}
+
+
+void 
+MskStaticAnalyzer::SortGeometries()
+{
+}
+
+
+Geometry*
+MskStaticAnalyzer::FindTitleIntersection(
+   const std::string& TitleName,
+   const std::string& LayerName)
+{   
+   if (TitleName.empty() || LayerName.empty()) { return nullptr; }
+
+   Geometry* p_TitleNameObj = FindTitleByName(TitleName);
+   const auto layerIter = FindLayer(LayerName);
+   if (layerIter == MskData->libraries[0]->layers.end() || nullptr == p_TitleNameObj) { return nullptr; }
+
+   Geometry* p_resObj = nullptr;
+   for (size_t i = 0; i < layerIter->geometries.size(); i++)
+   {
+      if (IsIntersected(p_TitleNameObj, layerIter->geometries[i]))
+      {
+         p_resObj = layerIter->geometries[i];
+         break;
+      }
+   }
+   return p_resObj;
+}
+
+
+Geometry*
+MskStaticAnalyzer::FindTitleByName(
+   const std::string& Name)
+{
+   const static auto titleLayerIter = FindLayer("TITLE");
+
+   Geometry* p_resObj = nullptr;
+   for (size_t i = 0;i<titleLayerIter->geometries.size();i++)
+   {
+      if (Name == static_cast<Text*>(titleLayerIter->geometries[i])->stringValue)
+      {
+         p_resObj = titleLayerIter->geometries[i];
+         break;
+      }
+   }
+   return p_resObj;
+}
+
+bool 
+MskStaticAnalyzer::IsIntersected(
+   Geometry* First,
+   Geometry* Second)
+{
+   if (!First || !Second) { return false; }
+
+   if (First->min.x > Second->max.x || Second->max.x < First->min.x || First->min.y>Second->max.y || Second->min.y > First->max.y)
+   {
+      return false;
+   }
+   return true;
 }

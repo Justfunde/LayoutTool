@@ -50,8 +50,8 @@ int16_t
 LayoutReader_MSK::ConvertMskLayerNum(
    const std::string& LayerName)
 {
-    auto it = LayerMap.find(LayerName);
-    if (it == LayerMap.end()) { return undefinedValue; }
+    auto it = g_layerMap.find(LayerName);
+    if (it == g_layerMap.end()) { return undefinedValue; }
 
     return it->second;
 }
@@ -290,7 +290,7 @@ void LayoutReader_MSK::ReadBoundingBox(const std::string& FileLine)
       Coord rightTop;
       if (!sscanf(FileLine.c_str(), "BB(%d,%d,%d,%d)", &leftBot.x, &leftBot.y, &rightTop.x, &rightTop.y)) throw std::exception();
       Layer boundingBoxLayer;
-      const int16_t layerNum = LayerMap.find("BB")->second;
+      const int16_t layerNum = g_layerMap.find("BB")->second;
       boundingBoxLayer.layer = layerNum;
       boundingBoxLayer.name = "BB";
      
@@ -326,7 +326,7 @@ LayoutReader_MSK::ReadTitle(
 
       if (!sscanf(FileLine.c_str(), "TITLE %d %d  #%s", &leftBot.x, &leftBot.y, buf)) throw std::exception();
       Geometry* text = new Text;
-      const int16_t layerNum = LayerMap.find("TITLE")->second;
+      const int16_t layerNum = g_layerMap.find("TITLE")->second;
       Text* p_text = static_cast<Text*>(text);
       p_text->coords.push_back(leftBot);
       p_text->layer = layerNum;
