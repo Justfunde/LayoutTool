@@ -1,6 +1,6 @@
 ______________________MSK_ANALYZER_RESULTS______________________
 ______________________SECTION_COMMON_INFORMATION______________________
-Data&time information: 2022-04-9	00:18:59
+Data&time information: 2022-04-12	23:57:14
 
 Layout file name : tests/Kotlyarov_LR1.MSK
 Rule file name : cmos012.rul
