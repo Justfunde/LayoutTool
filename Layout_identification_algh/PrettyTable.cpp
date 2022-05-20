@@ -21,8 +21,9 @@ namespace bprinter {
    void TablePrinter::SetFflushRigth() { FflushLeft = false; }
 
 
-   void TablePrinter::AddColumn(const std::wstring& HeaderName, size_t ColumnWidth) {
-      if (ColumnWidth < 4) { throw std::invalid_argument("Column size has to be >= 4"); }
+   void TablePrinter::AddColumn(const std::wstring& HeaderName, size_t ColumnWidth = 0) {
+     
+      if (HeaderName.size() > ColumnWidth) { ColumnWidth = HeaderName.size(); }
 
       Headers.push_back(HeaderName);
       ColumnWidthArr.push_back(ColumnWidth);
