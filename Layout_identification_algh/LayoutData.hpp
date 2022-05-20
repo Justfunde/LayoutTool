@@ -140,6 +140,7 @@ struct LayoutData {
     std::vector<Library*>  libraries;
     LayoutFileFormat        fileFormat;
 public:
+   LayoutData():fileFormat(LayoutFileFormat::undefined) {}
     ~LayoutData() {
         for (size_t i = 0; i < libraries.size(); ++i) {
             delete libraries[i];
