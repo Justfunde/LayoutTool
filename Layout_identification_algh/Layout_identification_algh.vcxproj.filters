@@ -22,6 +22,9 @@
     <Filter Include="TablePrinter">
       <UniqueIdentifier>{6c26fc86-1ca9-480f-a145-5d93ec718c02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NewPrettyTable">
+      <UniqueIdentifier>{fea6cb75-6fdf-45dc-a7e3-d47a509586b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -60,6 +63,9 @@
     <ClCompile Include="PrettyTable.cpp">
       <Filter>TablePrinter</Filter>
     </ClCompile>
+    <ClCompile Include="NewPrettyTable.cpp">
+      <Filter>NewPrettyTable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Layout_comparator.h">
@@ -88,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="PrettyTable.hpp">
       <Filter>TablePrinter</Filter>
+    </ClInclude>
+    <ClInclude Include="NewPrettyTable.hpp">
+      <Filter>NewPrettyTable</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
