@@ -1,52 +1,129 @@
 ______________________MSK_ANALYZER_RESULTS______________________
 ______________________SECTION_COMMON_INFORMATION______________________
-Data&time information: 2022-04-12	23:57:14
+Data&time information: 2022-05-14	20:45:48
 
-Layout file name : tests/Kotlyarov_LR1.MSK
+Layout file name : tests/Kotlyarov LR4.msk
 Rule file name : cmos012.rul
 Layout information:
 lambda = 0.060000
-Inside 31 geometries and 8 layers
+Inside 370 geometries and 12 layers
 +----------------------------------------+
 | Layer name|Layer number|  GeometryCount|
 +----------------------------------------+
 |         BB|          -5|              1|
 |         NW|           1|              1|
-|         DP|          17|              5|
-|         DN|          16|              5|
-|         CO|          19|              9|
-|         PO|          13|              2|
-|         ME|          23|              6|
-|      TITLE|          -6|              2|
+|         DP|          17|             49|
+|         DN|          16|             55|
+|         CO|          19|             78|
+|         PO|          13|             32|
+|         ME|          23|             98|
+|         VI|          -4|             10|
+|         M2|          27|             23|
+|         V2|          -1|              2|
+|         M3|          34|              5|
+|      TITLE|          -6|             16|
 +----------------------------------------+
 
 
 
 ______________________SECTION_CELL_INFORMATION______________________
 Nwell info:
-LeftTop coordinates : {14,52}
-RightBot coordinates : {44,31}
-Height : 21
+LeftTop coordinates : {-61,66}
+RightBot coordinates : {146,42}
+Height : 24
 
 VDD and VSS info:
 VDD:
-Power rail has no title! Information may not be accurate!
-LeftTop coordinates : {20,50}
-RightBot coordinates : {38,46}
+LeftTop coordinates : {-61,64}
+RightBot coordinates : {146,60}
 Height : 4
-Weight : 18
+Weight : 207
 Overlap channel and bus:
 Theoretical : 0.12
 Practical : 2
 
 VSS:
-Ground rail has no title! Information may not be accurate!
-LeftTop coordinates : {20,14}
-RightBot coordinates : {38,10}
+LeftTop coordinates : {-61,25}
+RightBot coordinates : {146,21}
 Height : 4
-Weight : 18
+Weight : 207
 
-Cell Height : 40
+Cell Height : 43
+
+
+
+Nmos transistors info:
++--------------------------+
+| Num|        Ln|        Mn|
++--------------------------+
+|   1|         2|         8|
+|   2|         2|         4|
+|   3|         2|         8|
+|   4|         2|         4|
+|   5|         2|         8|
+|   6|         2|         7|
+|   7|         2|         8|
+|   8|         2|         6|
+|   9|         2|         5|
+|  10|         2|         6|
+|  11|         2|         8|
+|  12|         2|         4|
+|  13|         2|         8|
+|  14|         2|         4|
+|  15|         2|         8|
+|  16|         2|         7|
+|  17|         2|         8|
+|  18|         2|         6|
+|  19|         2|         5|
+|  20|         2|         6|
++--------------------------+
+
+
+
+Pmos transistors info:
++--------------------------+
+| Num|        Lp|        Mp|
++--------------------------+
+|   1|         2|         8|
+|   2|         2|         4|
+|   3|         2|         8|
+|   4|         2|         4|
+|   5|         2|         8|
+|   6|         2|         9|
+|   7|         2|        12|
+|   8|         2|         8|
+|   9|         2|         9|
+|  10|         2|        10|
+|  11|         2|         8|
+|  12|         2|         4|
+|  13|         2|         8|
+|  14|         2|         4|
+|  15|         2|         8|
+|  16|         2|         9|
+|  17|         2|        12|
+|  18|         2|         8|
+|  19|         2|         9|
+|  20|         2|        10|
++--------------------------+
+
+input A:
+pmos:
++--------------------------+
+| Num|        Lp|        Mp|
++--------------------------+
+|   1|         2|         8|
+|   2|         2|         4|
+|   3|         2|         8|
++--------------------------+
+nmos:
++--------------------------+
+| Num|        Ln|        Mn|
++--------------------------+
+|   1|         2|         8|
+|   2|         2|         4|
+|   3|         2|         8|
++--------------------------+
+
 
 
 

@@ -1,24 +1,20 @@
 #define _CRT_SECURE_NO_WARNINGS
-//#include "Layout_comparator.h"
-//#include "LayoutReader_MSK.hpp"
-//#include "MskStaticAnalyzer.hpp"
-//#include <iostream>
+#include "Layout_comparator.h"
+#include "LayoutReader_MSK.hpp"
+#include "MskStaticAnalyzer.hpp"
+#include <iostream>
 
-#include "NewPrettyTable.hpp"
+//#include "NewPrettyTable.hpp"
 
 int main(int argc, char* argv[]) {
   
 
-   PrettyTable table;
-   table.SetColumns(L"First", L"Second", L"Third",nullptr);
 
-   std::wstring value = L"test";
-   table << 1 << L"2"<<value;
 
-   //MskStaticAnalyzer analyzer;
-   //RuleParser parser("tests/cmos012.rul");
-   //parser.ParseFile();
-   //LayoutData  layoutFirst;
+   MskStaticAnalyzer analyzer;
+   RuleParser parser("tests/cmos012.rul");
+   parser.ParseFile();
+   LayoutData  layoutFirst;
    // //freopen("before.txt", "w", stdout);
    // //std::wstring FileName = L"tests/inv.gds";
    // //std::wstring FileName = L"output.gds";
@@ -26,21 +22,21 @@ int main(int argc, char* argv[]) {
    // //std::wstring FileName = L"tests/xor.gds";
    // //std::wstring FileName = L"tests/1Kpolyg.gds";
    // //std::wstring FileName = L"tests/testDesign.gds";
-   // std::wstring fileNameFirst = L"tests/Kotlyarov_LR1.MSK";
+    std::wstring fileNameFirst = L"tests/Kotlyarov LR4.msk";
 
-   // LayoutReader* p_readerFirst = GetReader(fileNameFirst);
-   // if (!p_readerFirst) {
-   //     std::wcerr << "__err__ : Can't file appropriate reader for given file '" << fileNameFirst << "'." << std::endl;
-   //     return EXIT_FAILURE;
-   // }
-   // if (!p_readerFirst->Read(&layoutFirst)) {
-   //     std::wcerr << "__err__ : Can't read file '" << fileNameFirst << "'." << std::endl;
-   //     FreeReader(p_readerFirst);
-   //     return EXIT_FAILURE;
-   // }
-   // FreeReader(p_readerFirst);
-   // analyzer.SetParameters(&layoutFirst, parser.GetRules());
-   // analyzer.WriteAnalyzedFile("tests/testAnalyzerFile.txt");
+    LayoutReader* p_readerFirst = GetReader(fileNameFirst);
+    if (!p_readerFirst) {
+        std::wcerr << "__err__ : Can't file appropriate reader for given file '" << fileNameFirst << "'." << std::endl;
+        return EXIT_FAILURE;
+    }
+    if (!p_readerFirst->Read(&layoutFirst)) {
+        std::wcerr << "__err__ : Can't read file '" << fileNameFirst << "'." << std::endl;
+        FreeReader(p_readerFirst);
+        return EXIT_FAILURE;
+    }
+    FreeReader(p_readerFirst);
+    analyzer.SetParameters(&layoutFirst, parser.GetRules());
+    analyzer.WriteAnalyzedFile("tests/testAnalyzerFile.txt");
 
    //// std::wcout << "Input file " << fileNameFirst << " has " << layoutFirst.libraries.size() << " library(ies)" << std::endl;
    ////

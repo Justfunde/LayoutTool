@@ -299,6 +299,8 @@ MskStaticAnalyzer::WriteCellInfo()
    File << L"______________________SECTION_CELL_INFORMATION______________________\n";
    WriteNwellInfo();
    WriteVddVssInfo();
+   WriteMnInfo();
+   WriteMpInfo();
 }
 
 
@@ -427,6 +429,94 @@ MskStaticAnalyzer::FindTitleIntersection(
 }
 
 
+std::list<Geometry*>
+MskStaticAnalyzer::FindPolyGates(
+   Geometry* Obj)
+{
+   if (nullptr == Obj) {
+      throw std::runtime_error("Nullptr in FindPolyGates");}
+
+   auto polyLayer = FindLayer("PO");
+   if (MskData->libraries[0]->layers.end() == polyLayer) { throw std::runtime_error("Layout has no poly gates!"); }
+
+   std::list<Geometry*> intersectedPolyGeometries;
+   for (auto it = polyLayer->geometries.begin(); it != polyLayer->geometries.end(); it++)
+   {
+      if (IsIntersected(Obj, *it)) 
+      {
+         intersectedPolyGeometries.push_back(*it);
+      }
+   }
+   return intersectedPolyGeometries;
+}
+
+
+inline 
+void 
+MskStaticAnalyzer::WriteMpInfo()
+{
+   File << L"Pmos transistors info:\n";
+
+
+   bprinter::TablePrinter tp(File);
+   tp.AddColumn(L"Num", 4);
+   tp.AddColumn(L"Lp", 10);
+   tp.AddColumn(L"Mp", 10);
+   tp.PrintHeader();
+
+   auto pDiffusions = FindLayer("DP");
+   if (MskData->libraries[0]->layers.end() == pDiffusions) { throw std::runtime_error("There is no pDiffusions in layout!\n"); }
+
+   uint32_t prev = 0;
+   uint32_t curr = 1;
+   for (size_t i = 0,cnt = 0;i< pDiffusions->geometries.size();i++)
+   {
+      auto polyGates = FindPolyGates(pDiffusions->geometries[i]);
+      if (polyGates.size() == 0) { continue; }
+
+      curr = pDiffusions->geometries[i]->max.y - pDiffusions->geometries[i]->min.y;
+      if (prev == curr) { continue; }
+      else { prev = curr; }
+      tp << ++cnt << polyGates.front()->max.x - polyGates.front()->min.x << curr;
+   }
+   tp.PrintFooter();
+   File << L"\n\n\n";
+}
+
+inline
+void
+MskStaticAnalyzer::WriteMnInfo()
+{
+   File << L"Nmos transistors info:\n";
+
+
+   bprinter::TablePrinter tp(File);
+   tp.AddColumn(L"Num", 4);
+   tp.AddColumn(L"Ln", 10);
+   tp.AddColumn(L"Mn", 10);
+   tp.PrintHeader();
+
+   auto nDiffusions = FindLayer("DN");
+   if (MskData->libraries[0]->layers.end() == nDiffusions) { throw std::runtime_error("There is no nDiffusions in layout!\n"); }
+
+   uint32_t prev = 0;
+   uint32_t curr = 1;
+   for (size_t i = 0,cnt = 0; i < nDiffusions->geometries.size(); i++)
+   {
+      auto polyGates = FindPolyGates(nDiffusions->geometries[i]);
+      if (polyGates.size() == 0) { continue; }
+
+      curr = nDiffusions->geometries[i]->max.y - nDiffusions->geometries[i]->min.y;
+      if (prev == curr) { continue; }
+      else { prev = curr; }
+
+      tp << ++cnt << polyGates.front()->max.x - polyGates.front()->min.x << curr;
+   }
+   tp.PrintFooter();
+   File << L"\n\n\n";
+}
+
+
 Geometry*
 MskStaticAnalyzer::FindTitleByName(
    const std::string& Name)
@@ -452,7 +542,7 @@ MskStaticAnalyzer::IsIntersected(
 {
    if (!First || !Second) { return false; }
 
-   if (First->min.x > Second->max.x || Second->max.x < First->min.x || First->min.y>Second->max.y || Second->min.y > First->max.y)
+   if (First->min.x > Second->max.x || Second->min.x > First->max.x || First->min.y>Second->max.y || Second->min.y > First->max.y)
    {
       return false;
    }

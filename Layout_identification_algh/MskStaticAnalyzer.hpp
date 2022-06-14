@@ -65,6 +65,11 @@ private:
    //cell info
    inline void WriteNwellInfo();
    inline void WriteVddVssInfo();
+   inline void WriteMpInfo();
+   inline void WriteMnInfo();
+
+   std::list<Geometry*> FindPolyGates(Geometry* Obj);
+
 
    std::vector<Layer>::const_iterator FindLayer(const std::string& LayerName) const;
    Geometry* FindTitleIntersection(const std::string& TitleName, const std::string& LayerName);
